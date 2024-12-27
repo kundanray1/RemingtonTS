@@ -5,14 +5,15 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
 const Modal: React.FC<{ poolId: string; onClose: () => void }> = ({ poolId, onClose }) => {
   const dispatch = useAppDispatch();
-  const pool = useAppSelector((state) => state?.cadSlice?.pools?.find((p) => p.id === poolId));
-const state= useAppSelector(state=>state)
-  console.log(state)
+  const pool = useAppSelector((state) => state?.cadStateSlice?.pools?.find((p) => p.id === poolId));
+
   const [length, setLength] = useState(pool?.length || 20);
   const [width, setWidth] = useState(pool?.width || 10);
   const [depth, setDepth] = useState(pool?.depth || 4);
   const [material, setMaterial] = useState(pool?.material || ELEMENTS.pool.materials[0]);
   const [features, setFeatures] = useState(pool?.features || []);
+
+console.log(pool,'pool')
 
 
   useEffect(() => {

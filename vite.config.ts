@@ -11,4 +11,12 @@ export default defineConfig({
     host: true,
     port: 3000,
   },
+  resolve: {
+    alias: {
+      loglevel: 'loglevel/lib/loglevel.js'
+    }
+  },
+  optimizeDeps: {
+    exclude: ['xf-parser','three','dxf-parser','loglevel']
+  }
 })

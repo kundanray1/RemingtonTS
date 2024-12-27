@@ -7,6 +7,7 @@ import './features/Counter/index.module.css'
 import Counter from './features/Counter/index'
 import DocumentList from './features/DocumentList'
 import { history, store } from './store'
+import DXFEditor from './features/DocumentList/DXFEditor'
 
 const App: React.FC = () => {
   return (
@@ -14,7 +15,7 @@ const App: React.FC = () => {
       <HistoryRouter history={history}>
         <Routes>
           <Route path="/" element={<Counter />} />
-          <Route path="/doclist" element={<DocumentList />} />
+          <Route path="/doclist" element={<DXFEditor />} />
         </Routes>
       </HistoryRouter>
     </ReduxStoreProvider>

@@ -14,6 +14,10 @@ export const ELEMENTS = {
         width: 10,  // Default width
         depth: 4,   // Default depth in feet
       },
+      position: {
+        x: 50, // Default x-coordinate
+        y: 50, // Default y-coordinate
+      },
     },
     hotTub: {
       name: 'Hot Tub',
@@ -23,12 +27,14 @@ export const ELEMENTS = {
           key: 'square',
           image: '/images/square-tub.png',
           dimensions: { length: 5, width: 5, depth: 3 }, // Dimensions in feet
+          position: { x: 100, y: 100 }, // Default position for square hot tub
         },
         {
           title: 'Octagon Hot Tub',
           key: 'octagon',
           image: '/images/octagon-tub.png',
           dimensions: { radius: 3, depth: 3 }, // Radius for octagon
+          position: { x: 150, y: 150 }, // Default position for octagon hot tub
         },
       ],
       features: [

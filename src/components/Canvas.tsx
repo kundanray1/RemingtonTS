@@ -55,10 +55,10 @@ const Canvas: React.FC<CanvasProps> = ({
             y={element.y || 50}
             points={
               element.points || [
-                { x: 50, y: 50 },
-                { x: 150, y: 50 },
-                { x: 150, y: 100 },
-                { x: 50, y: 100 },
+                { x: element.x, y: element.y }, // Top-left
+                { x: element.x + element.width, y: element.y }, // Top-right
+                { x: element.x + element.width, y: element.y + element.length }, // Bottom-right
+                { x: element.x, y: element.y + element.length }, // Bottom-left
               ]
             }
             borderColor="blue"

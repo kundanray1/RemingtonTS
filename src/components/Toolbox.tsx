@@ -14,7 +14,6 @@ const Toolbox: React.FC<ToolBoxProps> = ({addElement}) => {
   const dispatch = useAppDispatch();
 
 
-
   const handleAddPool = () => {
     const newPool = {
       id: `pool-${Date.now()}`,
@@ -22,18 +21,17 @@ const Toolbox: React.FC<ToolBoxProps> = ({addElement}) => {
       length: ELEMENTS.pool.dimensions.length,
       width: ELEMENTS.pool.dimensions.width,
       depth: ELEMENTS.pool.dimensions.depth,
+      x: ELEMENTS.pool.position.x, // Use default x-coordinate
+      y: ELEMENTS.pool.position.y, // Use default y-coordinate
       perimeter: 2 * (ELEMENTS.pool.dimensions.length + ELEMENTS.pool.dimensions.width),
       material: ELEMENTS.pool.materials[0],
       features: [],
       price: 0,
     };
     newPool.price = 100 * newPool.perimeter;
-
-    // Dispatch the new pool to the Redux store
     dispatch(addPool(newPool));
-
-
   };
+  
 
 
 
