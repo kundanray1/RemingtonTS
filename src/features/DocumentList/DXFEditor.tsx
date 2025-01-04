@@ -3,50 +3,48 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Helper } from 'dxf'
 import * as THREE from 'three'
 
+// Utility function to calculate arc points
 const calculateArcPoints = (start, end) => {
-  const points = []
-  const bulge = start.bulge
+  const points = [];
+  const bulge = start.bulge;
 
-  if (bulge === 0) return points // Straight line if no bulge
+  if (bulge === 0) return points;
 
-  const angle = 4 * Math.atan(bulge) // Central angle
-  const distance = Math.sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)
-  const radius = distance / (2 * Math.sin(angle / 2))
+  const angle = 4 * Math.atan(bulge);
+  const distance = Math.sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2);
+  const radius = distance / (2 * Math.sin(angle / 2));
 
-  const midX = (start.x + end.x) / 2
-  const midY = (start.y + end.y) / 2
-  const dx = end.x - start.x
-  const dy = end.y - start.y
+  const midX = (start.x + end.x) / 2;
+  const midY = (start.y + end.y) / 2;
+  const perpendicularLength = Math.sqrt(radius ** 2 - (distance / 2) ** 2);
+  const direction = bulge > 0 ? 1 : -1;
 
-  const perpendicularLength = Math.sqrt(radius ** 2 - (distance / 2) ** 2)
-  const direction = bulge > 0 ? 1 : -1
-  const normalX = (-dy / distance) * direction
-  const normalY = (dx / distance) * direction
+  const normalX = (-(end.y - start.y) / distance) * direction;
+  const normalY = ((end.x - start.x) / distance) * direction;
 
-  const centerX = midX + normalX * perpendicularLength
-  const centerY = midY + normalY * perpendicularLength
+  const centerX = midX + normalX * perpendicularLength;
+  const centerY = midY + normalY * perpendicularLength;
 
-  const startAngle = Math.atan2(start.y - centerY, start.x - centerX)
-  let endAngle = Math.atan2(end.y - centerY, end.x - centerX)
+  const startAngle = Math.atan2(start.y - centerY, start.x - centerX);
+  let endAngle = Math.atan2(end.y - centerY, end.x - centerX);
 
-  if (bulge < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI
-  if (bulge > 0 && endAngle < startAngle) endAngle += 2 * Math.PI
+  if (bulge < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI;
+  if (bulge > 0 && endAngle < startAngle) endAngle += 2 * Math.PI;
 
-  const arcLength = Math.abs(endAngle - startAngle)
-  const segments = Math.max(8, Math.ceil(arcLength * 16))
-  const deltaAngle = arcLength / segments
+  const curve = new THREE.EllipseCurve(
+    centerX,
+    centerY,
+    radius,
+    radius,
+    startAngle,
+    endAngle,
+    false,
+    0
+  );
+  const curvePoints = curve.getPoints(50); // Smooth curve
 
-  for (let i = 1; i < segments; i++) {
-    const theta = startAngle + deltaAngle * i
-    points.push({
-      x: centerX + radius * Math.cos(theta),
-      y: centerY + radius * Math.sin(theta),
-      z: 0,
-    })
-  }
-
-  return points
-}
+  return curvePoints.map((p) => ({ x: p.x, y: p.y, z: 0 }));
+};
 
 const DXFEditor = () => {
   const canvasRef = useRef(null)
