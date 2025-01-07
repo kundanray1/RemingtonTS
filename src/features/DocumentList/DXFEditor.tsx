@@ -5,31 +5,31 @@ import * as THREE from 'three'
 
 // Utility function to calculate arc points
 const calculateArcPoints = (start, end) => {
-  const points = [];
-  const bulge = start.bulge;
+  const points = []
+  const bulge = start.bulge
 
-  if (bulge === 0) return points;
+  if (bulge === 0) return points
 
-  const angle = 4 * Math.atan(bulge);
-  const distance = Math.sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2);
-  const radius = distance / (2 * Math.sin(angle / 2));
+  const angle = 4 * Math.atan(bulge)
+  const distance = Math.sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)
+  const radius = distance / (2 * Math.sin(angle / 2))
 
-  const midX = (start.x + end.x) / 2;
-  const midY = (start.y + end.y) / 2;
-  const perpendicularLength = Math.sqrt(radius ** 2 - (distance / 2) ** 2);
-  const direction = bulge > 0 ? 1 : -1;
+  const midX = (start.x + end.x) / 2
+  const midY = (start.y + end.y) / 2
+  const perpendicularLength = Math.sqrt(radius ** 2 - (distance / 2) ** 2)
+  const direction = bulge > 0 ? 1 : -1
 
-  const normalX = (-(end.y - start.y) / distance) * direction;
-  const normalY = ((end.x - start.x) / distance) * direction;
+  const normalX = (-(end.y - start.y) / distance) * direction
+  const normalY = ((end.x - start.x) / distance) * direction
 
-  const centerX = midX + normalX * perpendicularLength;
-  const centerY = midY + normalY * perpendicularLength;
+  const centerX = midX + normalX * perpendicularLength
+  const centerY = midY + normalY * perpendicularLength
 
-  const startAngle = Math.atan2(start.y - centerY, start.x - centerX);
-  let endAngle = Math.atan2(end.y - centerY, end.x - centerX);
+  const startAngle = Math.atan2(start.y - centerY, start.x - centerX)
+  let endAngle = Math.atan2(end.y - centerY, end.x - centerX)
 
-  if (bulge < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI;
-  if (bulge > 0 && endAngle < startAngle) endAngle += 2 * Math.PI;
+  if (bulge < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI
+  if (bulge > 0 && endAngle < startAngle) endAngle += 2 * Math.PI
 
   const curve = new THREE.EllipseCurve(
     centerX,
@@ -39,12 +39,12 @@ const calculateArcPoints = (start, end) => {
     startAngle,
     endAngle,
     false,
-    0
-  );
-  const curvePoints = curve.getPoints(50); // Smooth curve
+    0,
+  )
+  const curvePoints = curve.getPoints(50) // Smooth curve
 
-  return curvePoints.map((p) => ({ x: p.x, y: p.y, z: 0 }));
-};
+  return curvePoints.map((p) => ({ x: p.x, y: p.y, z: 0 }))
+}
 
 const DXFEditor = () => {
   const canvasRef = useRef(null)
@@ -83,7 +83,7 @@ const DXFEditor = () => {
     const entities = helper.denormalised
 
     const layerColors = {
-      Pool: 0x0000ff, // Blue
+      Pool: 0xff0000, // Blue
       Deck: 0x00ff00, // Green
       Spa: 0xff0000, // Red
       Steps_And_Benches: 0xffff00, // Yellow
@@ -95,36 +95,38 @@ const DXFEditor = () => {
       try {
         // Process Polyline Entities
         if (entity.type === 'POLYLINE') {
-            const points = [];
-            for (let i = 0; i < entity.vertices.length; i++) {
-                const v1 = entity.vertices[i];
-                const v2 = entity.vertices[(i + 1) % entity.vertices.length]; // Wrap-around for closed polylines
-        
-                // Add current vertex to points
-                points.push(new THREE.Vector3(v1.x, v1.y, v1.z || 0));
-        
-                // Handle bulge for arcs
-                if (v1.bulge && v1.bulge !== 0) {
-                    const arcPoints = calculateArcPoints(v1, v2);
-                    console.log("Computed Arc Points:", arcPoints); // Debugging
-                    points.push(...arcPoints.map((p) => new THREE.Vector3(p.x, p.y, p.z || 0)));
-                }
+          const points = []
+          for (let i = 0; i < entity.vertices.length; i++) {
+            const v1 = entity.vertices[i]
+            const v2 = entity.vertices[(i + 1) % entity.vertices.length] // Wrap-around for closed polylines
+
+            // Add current vertex to points
+            points.push(new THREE.Vector3(v1.x, v1.y, v1.z || 0))
+
+            // Handle bulge for arcs
+            if (v1.bulge && v1.bulge !== 0) {
+              const arcPoints = calculateArcPoints(v1, v2)
+              console.log('Computed Arc Points:', arcPoints) // Debugging
+              points.push(
+                ...arcPoints.map((p) => new THREE.Vector3(p.x, p.y, p.z || 0)),
+              )
             }
-        
-            // Close the polyline if needed
-            if (entity.closed) points.push(points[0]);
-        
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-            const material = new THREE.LineBasicMaterial({
-                color: layerColors[entity.layer] || 0xffffff,
-            });
-        
-            object = entity.closed
-                ? new THREE.LineLoop(geometry, material)
-                : new THREE.Line(geometry, material);
+          }
+
+          // Close the polyline if needed
+          if (entity.closed) points.push(points[0])
+
+          const geometry = new THREE.BufferGeometry().setFromPoints(points)
+          const material = new THREE.LineBasicMaterial({
+            color: layerColors[entity.layer] || 0xffffff,
+          })
+
+          console.log('material', material)
+
+          object = entity.closed
+            ? new THREE.LineLoop(geometry, material)
+            : new THREE.Line(geometry, material)
         }
-        
-        
 
         if (entity.type === 'ARC') {
           const curve = new THREE.ArcCurve(
@@ -191,9 +193,6 @@ const DXFEditor = () => {
       }
     })
 
-
-
-
     // const gridHelper = new THREE.GridHelper(1000, 100)
     // scene.add(gridHelper)
     initializeRenderer()
@@ -254,6 +253,21 @@ const DXFEditor = () => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+
+  if (canvasRef.current) {
+    canvasRef.current.addEventListener('click', (e) => {
+      const rect = canvasRef.current.getBoundingClientRect() // Get canvas position relative to viewport
+      const x = e.clientX - rect.left // Calculate x relative to canvas
+      const y = e.clientY - rect.top // Calculate y relative to canvas
+
+      console.log('Clicked at:', x, y)
+
+      // Check if the click is inside the rectangle
+      if (x >= 50 && x <= 150 && y >= 50 && y <= 150) {
+        console.log('Clicked inside the rectangle!')
+      }
+    })
+  }
 
   return (
     <div>

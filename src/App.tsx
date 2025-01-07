@@ -14,8 +14,8 @@ const App: React.FC = () => {
     <ReduxStoreProvider store={store}>
       <HistoryRouter history={history}>
         <Routes>
-          <Route path="/" element={<Counter />} />
-          <Route path="/doclist" element={<DXFEditor />} />
+          <Route path="/" element={<DXFEditor />} />
+          <Route path="/js-approach" element={<DocumentList />} />
         </Routes>
       </HistoryRouter>
     </ReduxStoreProvider>
