@@ -59,7 +59,7 @@
     "@types/react-dom": "^18.2.25",
     "@types/three": "^0.171.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/parser": "^8.29.0",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "all-contributors-cli": "^6.26.1",
